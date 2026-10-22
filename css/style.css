@@ -6,3 +6,6 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 /* Respect the hidden state even when the fallback uses grid layout. */
 .portrait-fallback[hidden]{display:none!important}
+.footer-bottom button{border:0;background:none;color:inherit;font:inherit;cursor:pointer;padding:0}.footer-bottom button:hover{color:var(--blue)}
+.analytics-consent{position:fixed;z-index:30;inset:auto 16px 16px;max-width:760px;margin-inline:auto;padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2)}.analytics-consent[hidden]{display:none}.analytics-consent h2{font-size:16px;margin:0 0 5px}.analytics-consent p{font-size:12px;line-height:1.5;color:var(--muted);margin:0;max-width:480px}.analytics-actions{display:flex;gap:8px;flex-shrink:0}.analytics-actions .button{font-size:12px;padding:8px 13px}
+@media(max-width:600px){.analytics-consent{inset:auto 10px 10px;display:block;padding:17px;border-radius:13px}.analytics-actions{justify-content:flex-end;margin-top:12px}.footer-bottom div{flex-wrap:wrap}}

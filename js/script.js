@@ -135,6 +135,32 @@ function initContactForm() {
   form.querySelectorAll('input, textarea').forEach(field => field.addEventListener('input', () => field.removeAttribute('aria-invalid')));
 }
 
+function initVisitorAnalytics() {
+  const panel = document.querySelector('#analytics-consent');
+  const readChoice = () => { try { return localStorage.getItem('sahil-analytics-choice'); } catch (_) { return null; } };
+  const saveChoice = value => { try { localStorage.setItem('sahil-analytics-choice', value); } catch (_) { /* Consent choice cannot be saved in restricted storage. */ } };
+  const sendVisit = async () => {
+    const url = (SUPABASE_CONFIG.url || '').trim().replace(/\/$/, '');
+    const anonKey = (SUPABASE_CONFIG.anonKey || '').trim();
+    if (!url || !anonKey) return;
+    try {
+      const response = await fetch(`${url}/functions/v1/track-visit`, {
+        method: 'POST',
+        headers: { apikey: anonKey, 'Content-Type': 'application/json' },
+        body: '{}',
+        keepalive: true
+      });
+      if (!response.ok) throw new Error(`Supabase returned ${response.status}`);
+    } catch (error) { console.warn('Visitor analytics request failed:', error); }
+  };
+  const choice = readChoice();
+  if (choice === 'accepted') sendVisit();
+  if (!choice) panel.hidden = false;
+  document.querySelector('#analytics-accept')?.addEventListener('click', () => { saveChoice('accepted'); panel.hidden = true; sendVisit(); });
+  document.querySelector('#analytics-decline')?.addEventListener('click', () => { saveChoice('declined'); panel.hidden = true; });
+  document.querySelector('#privacy-settings')?.addEventListener('click', () => { panel.hidden = false; });
+}
+
 let revealObserver;
 function observeReveals(scope = document) {
   const items = scope.querySelectorAll('.reveal:not(.visible)');
@@ -162,6 +188,7 @@ document.documentElement.classList.add('js-ready');
 initTheme();
 initNavigation();
 initContactForm();
+initVisitorAnalytics();
 initActiveNavigation();
 observeReveals();
 loadProjects();
