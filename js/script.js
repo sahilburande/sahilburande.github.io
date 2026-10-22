@@ -2,6 +2,7 @@
 
 // Update this single value when a real contact email is ready.
 const CONTACT_EMAIL = 'your-email@example.com';
+const SUPABASE_CONFIG = window.SUPABASE_CONFIG || { url: '', anonKey: '' };
 const root = document.documentElement;
 
 function initTheme() {
@@ -78,11 +79,18 @@ function initContactForm() {
   const feedback = document.querySelector('#form-feedback');
   const emailLink = document.querySelector('#email-link');
   const emailDisplay = document.querySelector('#email-display');
+  const submitButton = form.querySelector('[type="submit"]');
   if (CONTACT_EMAIL && CONTACT_EMAIL !== 'your-email@example.com') {
     emailLink.href = `mailto:${CONTACT_EMAIL}`;
     emailDisplay.textContent = `${CONTACT_EMAIL} ↗`;
   }
-  form.addEventListener('submit', event => {
+  const prepareEmailDraft = data => {
+    const subject = `Portfolio message from ${data.get('name')}`;
+    const body = `Name: ${data.get('name')}\nEmail: ${data.get('email')}\n\n${data.get('message')}`;
+    const recipient = CONTACT_EMAIL || 'your-email@example.com';
+    window.location.href = `mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+  form.addEventListener('submit', async event => {
     event.preventDefault();
     const fields = [...form.querySelectorAll('input, textarea')];
     let valid = true;
@@ -92,11 +100,37 @@ function initContactForm() {
     });
     if (!valid) { feedback.textContent = 'Please enter your name, a valid email address, and a message.'; form.querySelector('[aria-invalid="true"]')?.focus(); return; }
     const data = new FormData(form);
-    const subject = `Portfolio message from ${data.get('name')}`;
-    const body = `Name: ${data.get('name')}\nEmail: ${data.get('email')}\n\n${data.get('message')}`;
-    const recipient = CONTACT_EMAIL || 'your-email@example.com';
-    feedback.textContent = 'Your email app should open with the message ready. It has not been sent by this website.';
-    window.location.href = `mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const url = (SUPABASE_CONFIG.url || '').trim().replace(/\/$/, '');
+    const anonKey = (SUPABASE_CONFIG.anonKey || '').trim();
+    if (!url || !anonKey) {
+      feedback.textContent = 'Supabase is not configured yet. Opening an email draft instead.';
+      prepareEmailDraft(data);
+      return;
+    }
+    submitButton.disabled = true;
+    feedback.textContent = 'Saving your message…';
+    try {
+      const response = await fetch(`${url}/rest/v1/contact_messages`, {
+        method: 'POST',
+        headers: {
+          apikey: anonKey,
+          Authorization: `Bearer ${anonKey}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({ name: data.get('name'), email: data.get('email'), message: data.get('message') })
+      });
+      if (!response.ok) throw new Error(`Supabase returned ${response.status}`);
+      form.reset();
+      fields.forEach(field => field.removeAttribute('aria-invalid'));
+      feedback.textContent = 'Your message was saved. Thanks for reaching out.';
+    } catch (error) {
+      console.warn('Could not save contact message:', error);
+      feedback.textContent = 'We could not save this message right now. Opening an email draft instead.';
+      prepareEmailDraft(data);
+    } finally {
+      submitButton.disabled = false;
+    }
   });
   form.querySelectorAll('input, textarea').forEach(field => field.addEventListener('input', () => field.removeAttribute('aria-invalid')));
 }
