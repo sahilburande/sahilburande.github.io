@@ -1,0 +1,6 @@
+[
+  {"title":"Verity — Deepfake Image Detection","description":"A machine learning project focused on detecting potentially manipulated images. Add verified implementation details as the project develops.","technologies":["Machine learning","Image analysis"],"repository":"","preview":""},
+  {"title":"AI-Based Local Food Recommendation Agent","description":"An application concept to help people discover relevant local food options.","technologies":["AI","Recommendations"],"repository":"","preview":""},
+  {"title":"Retail Market Basket Intelligence","description":"A data analysis project exploring relationships between products and potential recommendations.","technologies":["Data analysis","Retail"],"repository":"","preview":""},
+  {"title":"JavaScript Practical Applications","description":"Academic web application practice covering JavaScript concepts and browser interactions.","technologies":["JavaScript","HTML","CSS"],"repository":"","preview":""}
+]
