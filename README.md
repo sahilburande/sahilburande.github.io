@@ -25,12 +25,16 @@ A responsive personal portfolio for a Computer Science Engineering student inter
 ```text
 outputs/
 ├── index.html
+├── admin.html
 ├── css/style.css
+├── css/admin.css
 ├── js/script.js
+├── js/admin.js
 ├── js/supabase-config.js
 ├── data/projects.json
 ├── supabase/contact-messages.sql
 ├── supabase/visitor-analytics.sql
+├── supabase/admin-portal.sql
 ├── supabase/functions/track-visit/index.ts
 ├── assets/images/profile.jpg
 └── README.md
@@ -69,6 +73,7 @@ Then open `http://localhost:8000` in a browser. You can also use the Live Server
 - **Email:** replace `your-email@example.com` in the `CONTACT_EMAIL` constant at the top of `js/script.js`.
 - **Contact form:** `js/supabase-config.js` contains the public project URL and publishable key. The key is intended for browser code; the contact table's RLS policy only permits inserts.
 - **Visitor analytics:** Run `supabase/visitor-analytics.sql` in Supabase SQL Editor, then deploy `supabase/functions/track-visit/index.ts` as the `track-visit` Edge Function with JWT verification disabled. The function uses Supabase's server-side service-role secret; never copy that key into browser code or Git. The site asks visitors to accept before counting; it stores at most one record for each IP per UTC day. IP addresses are personal data: keep the table private and delete old records when no longer needed. These are daily unique-IP estimates, not a reliable count of individual people (for example, people may share an IP).
+- **Admin portal:** `admin.html` uses Supabase Auth email magic links. Run `supabase/admin-portal.sql` only after confirming the authorized administrator email, and add `https://sahilburande.github.io/admin.html` to Supabase Auth's allowed redirect URLs. The SQL policy permits only that verified email to read visitor IPs; never grant anonymous table reads.
 - **Projects:** edit `data/projects.json`. Each item supports `title`, `description`, `technologies`, `repository`, `demo`, and `preview`. Leave repository/demo blank until a verified URL is available. Preview paths are relative to the site root.
 - **Skills and education:** edit the corresponding semantic sections in `index.html` as details change.
 
