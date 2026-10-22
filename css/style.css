@@ -5,4 +5,4 @@
 @media(max-width:460px){.wrap{width:calc(100% - 32px)}.hero h1{font-size:49px}.section-heading h2{font-size:39px}.skill-grid{grid-template-columns:1fr}.about-facts{grid-template-columns:1fr}.about-facts>div:last-child{grid-column:auto}.contact-form{padding:20px}.footer-bottom{gap:12px;flex-direction:column}.actions .button{font-size:12px;padding:10px 13px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 /* Respect the hidden state even when the fallback uses grid layout. */
-.portrait-fallback[hidden]{display:none}
+.portrait-fallback[hidden]{display:none!important}
